@@ -1,6 +1,8 @@
 import qrcode
 import datetime
 import os
+import time
+from settings import save_path
 
 
 class QR:
@@ -13,15 +15,27 @@ class QR:
         )
 
     def createqr(self, text_data: str = 'default'):
-        self.qr.add_data(text_data)
+        utext = str(text_data.encode('utf-8'))
+        print(utext)
+        self.qr.add_data(utext)
         self.qr.make(fit=True)
         img = self.qr.make_image(fill_color="black", back_color="white")
         img.new_image()
-        img_path = "../tmpqr/{}_{}.jpg".format(datetime.datetime.now().strftime('%H%M%S'), text_data[:10])
+        img_path = "{}/{}_{}.jpg".format(save_path,
+                                         datetime.datetime.now().strftime('%H%M%S'),
+                                         utext[:10])
         img.save(img_path)
-        self.qr.clear()
         return img_path, img
 
-    def deleteqr(self, img_path: str):
-        os.remove(img_path)
+    def deleteqr(self, imgp: str):
+        self.qr.clear()
+        os.remove(imgp)
         return 1
+
+
+if __name__ == '__main__':
+    qr = QR()
+    # img_path = '../tmpqr/220040_fuck.jpg'
+    img_path, _ = qr.createqr('вам')
+    # qr.deleteqr(img_path)
+    print(img_path)
