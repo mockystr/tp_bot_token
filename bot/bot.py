@@ -14,11 +14,11 @@ def main():
     vk = vk_session.get_api()
     longpoll = VkBotLongPoll(vk_session, 180619567, wait=25)
     upload_url = vk.photos.getMessagesUploadServer(group_id=group_id)['upload_url']
-    qr = QR()
 
     for event in longpoll.listen():
         try:
             if event.type == VkBotEventType.MESSAGE_NEW and event.obj.text:
+                qr = QR()
                 qr_path, qr_img = qr.createqr(event.obj.text)
                 print(qr_path, qr_img)
 
@@ -37,17 +37,18 @@ def main():
                     vk.messages.send(
                         chat_id=event.chat_id,
                         random_id=random.randint(1, pow(10, 6)),
-                        message="Вот ваш купон",
+                        message='Вот ваш купон\n{}'.format(qr.qr.data_list),
                         attachment="photo-{}_{}".format(group_id, photo_id)
                     )
                 elif event.from_user:
                     vk.messages.send(
                         user_id=event.obj.from_id,
                         random_id=random.randint(1, pow(10, 6)),
-                        message='Вот ваш купон',
+                        message='Вот ваш купон\n{}'.format(qr.qr.data_list),
                         attachment="photo-{}_{}".format(group_id, photo_id)
                     )
-                # qr.deleteqr(qr_path)
+                qr.deleteqr(qr_path)
+                print(qr.qr.__dict__)
             elif event.type == VkBotEventType.MESSAGE_REPLY:
                 print('Новое сообщение-ответ:')
                 print('От меня для: ', end='')
@@ -73,7 +74,6 @@ def main():
                 print()
         except Exception as e:
             print(e)
-
 
 
 if __name__ == '__main__':
