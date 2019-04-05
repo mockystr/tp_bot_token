@@ -3,7 +3,7 @@ import datetime
 import os
 import time
 from settings import save_path
-
+import logging
 
 class QR:
     def __init__(self):
@@ -36,6 +36,6 @@ class QR:
 if __name__ == '__main__':
     qr = QR()
     # img_path = '../tmpqr/220040_fuck.jpg'
-    img_path, _ = qr.createqr('вам')
+    img_path, _ = qr.createqr('asd')
     # qr.deleteqr(img_path)
-    print(img_path)
+    logging.warning(img_path)
