@@ -7,6 +7,9 @@ import vk_api
 import os
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from jinja2 import Template
+import time
+import profile
+import timeit
 
 index_html = open('static/index.html').read()
 vk_session = vk_api.VkApi(token=token)
@@ -39,6 +42,7 @@ def createqr_to_vk(text):
 def message_new(**kwargs):
     photo_id, qr_path = createqr_to_vk(kwargs.get('text'))
 
+    print('before sendingd')
     if kwargs.get('from_chat'):
         vk.messages.send(
             chat_id=kwargs.get('from_chat'),
@@ -61,10 +65,11 @@ def err_callback(e):
 
 
 def main():
-    with Pool(os.cpu_count() * 2) as p:
+    with Pool(os.cpu_count()) as p:
         for event in longpoll.listen():
             if event.type == VkBotEventType.MESSAGE_NEW and event.obj.text:
                 print('пришло новое сообщение')
+                start = time.time()
 
                 if event is not None:
                     kwds = {'text': event.obj.text}
@@ -77,8 +82,10 @@ def main():
 
                 p.apply_async(func=message_new,
                               kwds=kwds)
-
-                # self.message_new(event)
+                # message_new(**kwds)
+                print('finish {:.6f}s'.format(time.time() - start))
+                print()
+                print()
             elif event.type == VkBotEventType.MESSAGE_REPLY:
                 print('ответ для {}'.format(event.obj.peer_id))
                 print('Текст:', event.obj.text)
