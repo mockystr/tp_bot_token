@@ -66,7 +66,7 @@ class Bot:
                     else:
                         kwds = {}
 
-                    r = p.apply_async(func=Bot.testing, args=(self,))
+                    r = p.apply_async(func=self.testing, args=(100,), kwds={'asd': 20, 'vb': 10})
                     r.wait()
                     print(r.successful())
                     # False
@@ -85,7 +85,6 @@ class Bot:
                     #   File "/anaconda3/lib/python3.7/multiprocessing/reduction.py", line 51, in dumps
                     #     cls(buf, protocol).dump(obj)
                     # TypeError: 'NoneType' object is not callable
-
 
                     # message_new(**kwds)
                     print('finish {:.6f}s'.format(time.time() - start))
