@@ -1,6 +1,6 @@
 from settings import token, group_id, save_path
 from qr import QR
-from multiprocessing import Pool, Process, current_process
+from multiprocessing import Pool, current_process
 import random
 import requests
 import vk_api
@@ -8,14 +8,13 @@ import os
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from jinja2 import Template
 import time
-import profile
-import timeit
 
 index_html = open('static/index.html').read()
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
 longpoll = VkBotLongPoll(vk_session, 180619567, wait=25)
 upload_url = vk.photos.getMessagesUploadServer(group_id=group_id)['upload_url']
+upload = vk_api.VkUpload(vk_session)
 
 
 def testing(*args, **kwargs):
@@ -28,15 +27,18 @@ def createqr_to_vk(text):
     qr = QR()
     qr_path, qr_img = qr.createqr(text)
     # print(qr_path, qr_img)
-
-    r = requests.post(upload_url,
-                      files={'photo': open(qr_path, 'rb')}).json()
-
-    params = {'server': r['server'],
-              'photo': r['photo'],
-              'hash': r['hash'],
-              'group_id': group_id}
-    return vk.photos.saveMessagesPhoto(**params)[0]['id'], qr_path
+    r = upload.photo_messages(qr_path)
+    print(r)
+    # r = requests.post(upload_url,
+    #                   files={'photo': open(qr_path, 'rb')}).json()
+    #
+    # params = {'server': r['server'],
+    #           'photo': r['photo'],
+    #           'hash': r['hash'],
+    #           'group_id': group_id}
+    # save_photo = vk.photos.saveMessagesPhoto(**params)
+    # print(save_photo)
+    return r[0]['id'], qr_path
 
 
 def message_new(**kwargs):
