@@ -16,6 +16,7 @@ imgkit = "*"
 wkhtmltopdf = "*"
 tarantool = "*"
 pika = "*"
+pdfcrowd = "*"
 
 [requires]
 python_version = "3.7"

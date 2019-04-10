@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f98ff194ea6f6e694b0fd1b69cafc20878254a5727382db64094947db096de61"
+            "sha256": "95a38649f84218ee9edba279749ac834c17bbe1b64a0228bb3172d6f6b8bbe10"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -127,6 +127,13 @@
             ],
             "index": "pypi",
             "version": "==0.2.3"
+        },
+        "pdfcrowd": {
+            "hashes": [
+                "sha256:3aba0c2fd94031c84c4113e1ca4267c3f27df3adb0501fd9a5ae5201d420d1c1"
+            ],
+            "index": "pypi",
+            "version": "==4.8.0"
         },
         "pika": {
             "hashes": [
