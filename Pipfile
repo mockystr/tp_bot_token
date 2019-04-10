@@ -10,6 +10,12 @@ vk-api = "*"
 qrcode = {extras = ["pil"],version = "*"}
 jinja2 = "*"
 pillow = "*"
+pathos = "*"
+dill = "*"
+imgkit = "*"
+wkhtmltopdf = "*"
+tarantool = "*"
+pika = "*"
 
 [requires]
 python_version = "3.7"
