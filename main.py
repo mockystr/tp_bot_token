@@ -29,7 +29,7 @@ def createqr_to_vk(text):
 def message_new(**kwargs):
     photo_id, qr_path = createqr_to_vk(kwargs.get('text'))
     print(qr_path)
-    print('before sendingd')
+
     if kwargs.get('from_chat'):
         vk.messages.send(
             chat_id=kwargs.get('from_chat'),
@@ -59,7 +59,7 @@ def main():
             kwds = pickle.dumps(kwds)
 
             channel.basic_publish(exchange='',
-                                  routing_key='hello',
+                                  routing_key='tpbot',
                                   body=kwds,
                                   properties=pika.BasicProperties(
                                       delivery_mode=2,  # make message persistent

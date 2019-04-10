@@ -37,8 +37,8 @@ class QR:
         r = template.render(qr_code=os.path.join(self.BASE_DIR, qr_tmp_path))
         print(r)
         qr_final_path = '{}/{}_{}.png'.format(save_path,
-                                                   datetime.datetime.now().strftime('%H%M%S'),
-                                                   text_data[:10])
+                                              datetime.datetime.now().strftime('%H%M%S'),
+                                              text_data[:10])
         config = imgkit.config(wkhtmltoimage='/usr/local/bin/wkhtmltoimage')
         imgkit.from_string(r, qr_final_path, config=config)
         os.remove(qr_tmp_path)
