@@ -10,7 +10,6 @@ import imgkit
 class QR:
     def __init__(self):
         self.BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        print(self.BASE_DIR)
         template_loader = FileSystemLoader(searchpath="./src")
         self.env = Environment(
             loader=template_loader,
@@ -33,20 +32,19 @@ class QR:
                                                text_data[:10])
         img.save(qr_tmp_path)
         template = self.env.get_template("index.html")
-        print(os.path.join(self.BASE_DIR, qr_tmp_path))
-        r = template.render(qr_code=os.path.join(self.BASE_DIR, qr_tmp_path))
-        print(r)
+        print(qr_tmp_path)
+        r = template.render(qr_code=qr_tmp_path)
         qr_final_path = '{}/{}_{}.png'.format(save_path,
                                               datetime.datetime.now().strftime('%H%M%S'),
                                               text_data[:10])
         config = imgkit.config(wkhtmltoimage='/usr/local/bin/wkhtmltoimage')
-        imgkit.from_string(r, qr_final_path, config=config)
+        imgkit.from_string(r, qr_final_path, config=config, options={'width': 420, 'height': 600})
         os.remove(qr_tmp_path)
         return qr_final_path, img
 
 
 if __name__ == '__main__':
+    start = time.time()
     qr = QR()
-    # img_path = '../tmpqr/220040_fuck.jpg'
-    img_path1, _ = qr.createqr('asd')
-    # qr.deleteqr(img_path)
+    qr.createqr('asdasd')
+    print(time.time() - start)

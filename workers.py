@@ -7,10 +7,12 @@ from main import message_new
 
 
 def callback(ch, method, properties, body):
+    start = time.time()
     body = pickle.loads(body)
     print("[x] {} received {}".format(current_process(), body))
     message_new(**body)
     ch.basic_ack(delivery_tag=method.delivery_tag)
+    print(time.time() - start)
 
 
 def consume():
