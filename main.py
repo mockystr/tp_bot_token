@@ -1,10 +1,9 @@
 from settings import token, group_id
 from qr import createqr
-from multiprocessing import Pool, current_process
+from multiprocessing import current_process
 import vk_api
 import os
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-import time
 import pika
 import pickle
 
@@ -18,16 +17,9 @@ longpoll = VkBotLongPoll(vk_session, group_id, wait=25)
 upload = vk_api.VkUpload(vk_session)
 
 
-def createqr_to_vk(text):
-    print('process name: {}'.format(current_process().name))
-    qr_path, qr_img = createqr(text)
-    r = upload.photo_messages(qr_path)
-    return r[0]['id'], qr_path
-
-
 def message_new(**kwargs):
-    photo_id, qr_path = createqr_to_vk(kwargs.get('text'))
-    print(qr_path)
+    qr_path, _ = createqr(kwargs.get('text'))
+    photo_id = upload.photo_messages(qr_path)[0]["id"]
 
     if kwargs.get('from_chat'):
         vk.messages.send(
@@ -43,7 +35,7 @@ def message_new(**kwargs):
             message='Вот ваш купон\nprocess name: {}'.format(current_process().name),
             attachment="photo-{}_{}".format(group_id, photo_id)
         )
-    # os.remove(qr_path)
+    os.remove(qr_path)
 
 
 def main():
@@ -63,7 +55,6 @@ def main():
                                   properties=pika.BasicProperties(
                                       delivery_mode=2,  # make message persistent
                                   ))
-            # message_new(**kwds)
 
 
 if __name__ == '__main__':
