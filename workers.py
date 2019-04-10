@@ -11,6 +11,7 @@ def callback(ch, method, properties, body):
     body = pickle.loads(body)
     print("[x] {} received {}".format(current_process(), body))
     message_new(**body)
+    print('done!!!')
     ch.basic_ack(delivery_tag=method.delivery_tag)
     print(time.time() - start)
 

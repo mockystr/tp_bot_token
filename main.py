@@ -1,5 +1,5 @@
 from settings import token, group_id
-from qr import QR
+from qr import createqr
 from multiprocessing import Pool, current_process
 import vk_api
 import os
@@ -20,8 +20,7 @@ upload = vk_api.VkUpload(vk_session)
 
 def createqr_to_vk(text):
     print('process name: {}'.format(current_process().name))
-    qr = QR()
-    qr_path, qr_img = qr.createqr(text)
+    qr_path, qr_img = createqr(text)
     r = upload.photo_messages(qr_path)
     return r[0]['id'], qr_path
 
@@ -44,7 +43,7 @@ def message_new(**kwargs):
             message='Вот ваш купон\nprocess name: {}'.format(current_process().name),
             attachment="photo-{}_{}".format(group_id, photo_id)
         )
-    os.remove(qr_path)
+    # os.remove(qr_path)
 
 
 def main():
