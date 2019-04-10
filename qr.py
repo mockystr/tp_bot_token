@@ -18,7 +18,7 @@ class QR:
         self.qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=50,
+            box_size=100,
             border=2,
         )
 
@@ -32,8 +32,7 @@ class QR:
                                                text_data[:10])
         img.save(qr_tmp_path)
         template = self.env.get_template("index.html")
-        print(qr_tmp_path)
-        r = template.render(qr_code=qr_tmp_path)
+        r = template.render(qr_code=os.path.join(self.BASE_DIR, qr_tmp_path))
         qr_final_path = '{}/{}_{}.png'.format(save_path,
                                               datetime.datetime.now().strftime('%H%M%S'),
                                               text_data[:10])
@@ -46,5 +45,6 @@ class QR:
 if __name__ == '__main__':
     start = time.time()
     qr = QR()
-    qr.createqr('asdasd')
+    url, _ = qr.createqr('asdasd')
+    # os.remove(url)
     print(time.time() - start)
