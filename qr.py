@@ -20,9 +20,9 @@ def createqr(text_data: str):
     img.save(qr_tmp_path)
 
     template = env.get_template("index.html")
-    path = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                         qr_tmp_path)).replace(os.sep, '/')
-    r = template.render(qr_code=path)
+    # path = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+    #                                      qr_tmp_path)).replace(os.sep, '/')
+    r = template.render(qr_code=qr_tmp_path)
     qr_final_path = '{}/{}_{}.png'.format(save_path,
                                           datetime.datetime.now().strftime('%H%M%S'),
                                           text_data[:10])

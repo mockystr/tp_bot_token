@@ -1,15 +1,14 @@
-from settings import token, group_id
-from qr import createqr
-from multiprocessing import current_process
-import vk_api
 import os
-from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-import pika
 import pickle
+import pika
+import vk_api
+from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
+from qr import createqr
+from settings import token, group_id
 
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
-channel.queue_declare(queue='tpbot', durable=True)
+channel.queue_declare(queue='tpbot')
 
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
@@ -17,31 +16,34 @@ longpoll = VkBotLongPoll(vk_session, group_id, wait=25)
 upload = vk_api.VkUpload(vk_session)
 
 
-def message_new(**kwargs):
-    qr_path, _ = createqr(kwargs.get('text'))
-    photo_id = upload.photo_messages(qr_path)[0]["id"]
+def createqr_to_vk(text):
+    qr_path, qr_img = createqr(text)
+    r = upload.photo_messages(qr_path)
+    os.remove(qr_path)
+    return r[0]['id']
 
+
+def new_message(**kwargs):
     if kwargs.get('from_chat'):
         vk.messages.send(
             chat_id=kwargs.get('from_chat'),
             random_id=0,
-            message='Вот ваш купон\nprocess name: {}'.format(current_process().name),
-            attachment="photo-{}_{}".format(group_id, photo_id)
+            message='Вот ваш купон',
+            attachment="photo-{}_{}".format(group_id, kwargs.get('photo_id'))
         )
     elif kwargs.get('from_user'):
         vk.messages.send(
             user_id=kwargs.get('from_user'),
             random_id=0,
-            message='Вот ваш купон\nprocess name: {}'.format(current_process().name),
-            attachment="photo-{}_{}".format(group_id, photo_id)
+            message='Вот ваш купон',
+            attachment="photo-{}_{}".format(group_id, kwargs.get('photo_id'))
         )
-    os.remove(qr_path)
 
 
 def main():
     for event in longpoll.listen():
         if event.type == VkBotEventType.MESSAGE_NEW and event.obj.text:
-            print('пришло новое сообщение')
+            print(event.obj.text)
             kwds = {'text': event.obj.text}
             if event.from_user:
                 kwds['from_user'] = event.obj.from_id
@@ -51,10 +53,8 @@ def main():
 
             channel.basic_publish(exchange='',
                                   routing_key='tpbot',
-                                  body=kwds,
-                                  properties=pika.BasicProperties(
-                                      delivery_mode=2,  # make message persistent
-                                  ))
+                                  body=kwds
+                                  )
 
 
 if __name__ == '__main__':
