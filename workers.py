@@ -5,11 +5,13 @@ import pika
 import pickle
 from multiprocessing import Pool, current_process
 from main import createqr_to_vk
+import hashlib
 
 
 def callback(ch, method, properties, body):
     start = time.time()
     body = pickle.loads(body)
+    body['text'] = hashlib.sha256(body['text'].encode()).hexdigest()
     print("[x] {} received {}".format(current_process(), body))
     body['photo_id'] = createqr_to_vk(body.get('text'))
     ch.basic_publish(exchange='',
