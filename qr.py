@@ -8,7 +8,7 @@ import imgkit
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 env = Environment(
-    loader=FileSystemLoader(searchpath="./src"),
+    loader=FileSystemLoader(searchpath="./templates"),
 )
 
 
